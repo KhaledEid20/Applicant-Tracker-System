@@ -1,6 +1,7 @@
 import json
 from Reader.pdf_Reader import read_pdf
 import Extractors.Personal_information as Personal
+import Extractors.ResumeExctractor as rex
 import spacy
 import re
 import pprint
@@ -23,7 +24,8 @@ class resume_parser():
         self.__text = read_pdf(self.__file_path)
         self.p__text = " ".join(self.__text.split())
         self.__nlp_doc = nlp(self.p__text)
-        self.__sections = ExtractEntities.extract_sections(self.__text);
+        self.__sections = ExtractEntities.extract_sections(self.__text)
+        self.__noun_chunks = list(self.__nlp_doc.noun_chunks)
         self.data_extractor()
 
 
@@ -32,11 +34,12 @@ class resume_parser():
         phoneNumber =       Personal.extract_mobile_number(self.p__text)
         Name =              Personal.extract_name(self.__nlp_doc , match=self.__matcher)
         Email =             Personal.extract_email(self.p__text)
-
+        skills =            rex.extract_skills(self.__nlp_doc , self.__noun_chunks)
 
         self.details['Phone'] = phoneNumber
         self.details['Name'] = Name
         self.details['Email'] = Email
+        self.details["Skills"] = skills
 
     def get_data(self):
         return self.details
@@ -44,7 +47,7 @@ class resume_parser():
         return self.__sections
     
 if __name__ == "__main__":
-    file_path = "OmkarResume.pdf"
+    file_path = "15100547.pdf"
     parser = resume_parser(file_path).get_data()
-    print(parser)
-    print(json.dumps(resume_parser(file_path).get_section()))
+    print(json.dumps(parser))
+    # print(json.dumps(resume_parser(file_path).get_section()))

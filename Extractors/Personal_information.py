@@ -16,7 +16,7 @@ def extract_mobile_number(text):
 def extract_name(text, match):
     """This extracts the name from the text using spacy matcher."""
     # Define the pattern for matching names
-    pattern = [const.NAME_PATTERN]
+    pattern = [[{'POS': 'PROPN'}, {'POS': 'PROPN'}]]
     match.add("NAME", *[pattern])
     matches = match(text)
 
