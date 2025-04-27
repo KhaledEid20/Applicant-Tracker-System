@@ -1,9 +1,11 @@
+import json
 from Reader.pdf_Reader import read_pdf
 import Extractors.Personal_information as Personal
 import spacy
 import re
 import pprint
 from spacy.matcher import Matcher
+from Helpers import ExtractEntities as ExtractEntities
 
 class resume_parser():
     def __init__(self, file_path):
@@ -21,6 +23,7 @@ class resume_parser():
         self.__text = read_pdf(self.__file_path)
         self.p__text = " ".join(self.__text.split())
         self.__nlp_doc = nlp(self.p__text)
+        self.__sections = ExtractEntities.extract_sections(self.__text);
         self.data_extractor()
 
 
@@ -37,8 +40,11 @@ class resume_parser():
 
     def get_data(self):
         return self.details
+    def get_section(self):
+        return self.__sections
     
 if __name__ == "__main__":
     file_path = "OmkarResume.pdf"
     parser = resume_parser(file_path).get_data()
     print(parser)
+    print(json.dumps(resume_parser(file_path).get_section()))
