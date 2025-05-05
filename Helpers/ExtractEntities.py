@@ -1,7 +1,5 @@
 from Helpers import constants as const
 
-
-
 def extract_sections(text):
     sections = {}
     key = False

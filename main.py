@@ -7,6 +7,8 @@ import re
 import pprint
 from spacy.matcher import Matcher
 from Helpers import ExtractEntities as ExtractEntities
+from Helpers import constants as const
+import pandas as pd
 
 class resume_parser():
     def __init__(self, file_path):
@@ -16,6 +18,7 @@ class resume_parser():
             'Name': None,
             'Email': None,
             'Phone': None,
+            "jop_title" : None,
             'Skills': None,
             'Education': None,
             'Experience': None,
@@ -25,7 +28,6 @@ class resume_parser():
         self.p__text = " ".join(self.__text.split())
         self.__nlp_doc = nlp(self.p__text)
         self.__sections = ExtractEntities.extract_sections(self.__text)
-        # self.__nlp_experience = nlp(self.__sections["education"])
         self.__noun_chunks = list(self.__nlp_doc.noun_chunks)
         self.data_extractor()
 
@@ -36,24 +38,24 @@ class resume_parser():
         Name = Personal.extract_name(self.__nlp_doc , match=self.__matcher)
         Email = Personal.extract_email(self.p__text)
         skills = rex.extract_skills(self.__nlp_doc , self.__noun_chunks)
-        exp = rex.extract_experience(self.p__text)
-        # edu = rex.extract_education([sent.text.strip() for sent in self.__nlp_doc.sents])
+        jop_title = rex.extract_jop_title(self.__text)
+        # exp = rex.extract_experience(self.p__text)
+        # edu = rex.extract_education(self.__sections["education"])
 
 
         self.details['Phone'] = phoneNumber
         self.details['Name'] = Name
         self.details['Email'] = Email
         self.details["Skills"] = skills
-        # self.details["Education"] = edu
-        self.details["Experience"] = exp
-
+        self.details["jop_title"] = jop_title
     def get_data(self):
         return self.details
     def get_section(self):
         return self.__sections
     
 if __name__ == "__main__":
-    file_path = "OmkarResume.pdf"
+    file_path = "12334650.pdf"
     parser = resume_parser(file_path).get_data()
     print(json.dumps(parser))
-    # print(json.dumps(resume_parser(file_path).get_section()))
+    # text = parser.__tex
+    # print([x.lower() for x in text if x not in const.STOPWORDS and x not in ['•' , '|' , '&' , '·']][:10])
