@@ -3,12 +3,13 @@ from Reader.pdf_Reader import read_pdf
 import Extractors.Personal_information as Personal
 import Extractors.ResumeExctractor as rex
 import spacy
-import re
-import pprint
 from spacy.matcher import Matcher
 from Helpers import ExtractEntities as ExtractEntities
 from Helpers import constants as const
 import pandas as pd
+import multiprocessing as mp
+import os
+import pprint as pp
 
 class resume_parser():
     def __init__(self, file_path):
@@ -50,12 +51,21 @@ class resume_parser():
         self.details["jop_title"] = jop_title
     def get_data(self):
         return self.details
-    def get_section(self):
-        return self.__sections
-    
+def trigger(path):
+    return resume_parser(path).get_data()
 if __name__ == "__main__":
-    file_path = "12334650.pdf"
-    parser = resume_parser(file_path).get_data()
-    print(json.dumps(parser))
-    # text = parser.__tex
-    # print([x.lower() for x in text if x not in const.STOPWORDS and x not in ['•' , '|' , '&' , '·']][:10])
+    pool = mp.Pool(mp.cpu_count())
+    # file_path = "./Resumes/Kareem-Mohamed-CV.pdf"
+    resumes = []
+    for root , directory , filenames in os.walk(os.path.join(os.getcwd() , "Resumes")):
+        for filename in filenames:
+            cv = os.path.join(root , filename)
+            resumes.append(cv)
+    result = [pool.apply_async(trigger , args=(x,)) for x in resumes]
+    result = [p.get() for p in result]
+    # result = trigger(file_path)
+    print(json.dumps(result))
+    with open("result.json", "w") as outfile:
+        json.dump(json.dumps(result), outfile, indent=4)
+    # print(os.getcwd())
+    # print(resumes)

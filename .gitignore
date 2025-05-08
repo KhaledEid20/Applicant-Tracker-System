@@ -60,3 +60,6 @@ pylint-report.txt
 # Bandit security reports
 bandit-report.json
 *.pdf
+result.json
+Resumes/
+Notes/

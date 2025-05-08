@@ -27,4 +27,5 @@ RESUME_SECTIONS = [
                     'professional experience',
                     'publications',
                     'skills',
+                    "higlights",
                 ]

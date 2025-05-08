@@ -36,9 +36,9 @@ def extract_skills(nlp_text, noun_chunks):
 
 def extract_jop_title(text):
     l = []
-    titles_list = pd.read_csv("Extractors\job-phrase-list.csv")
-    titles_list = titles_list.iloc[:, [0]]  # Keep only the first column
-    df_list = titles_list.iloc[:, 0].tolist()  # Convert the dataframe to a list
+    titles_list = pd.read_csv(os.path.join(os.getcwd() ,"ATS","Extractors", "job-phrase-list.csv"))
+    titles_list = titles_list.iloc[:, [0]]
+    df_list = titles_list.iloc[:, 0].tolist()
     text_cleaned = [x.lower() for x in text.split() if x not in const.STOPWORDS and x not in ['•' , '|' , '&' , '·']][:10]
     for i in text_cleaned:
         matches = process.extract(i, df_list)
